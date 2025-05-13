@@ -9,13 +9,12 @@
 }
 
 .board {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(9, 30px);
   width: 270px;
   height: 330px;
-  text-align: center;
   background-color: rgb(207 207 207);
-  border: 2px solid black;
+  border: 1px solid black;
 }
 
 .cell {

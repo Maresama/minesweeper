@@ -40,7 +40,21 @@ export default function Home() {
   const [numbers, setNumbers] = useState([0, 0, 0, 0, 0]);
   console.log(numbers);
 
-  const clickHandler = () => {
+  const [board, setBoard] = useState([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ]);
+
+  const clickHandler = (x: number, y: number) => {
     setSanpleCounter((sanpleConuter + 1) % 14); //余り
     console.log(sanpleConuter);
     const newNumbers = structuredClone(numbers);
@@ -60,94 +74,16 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.board}>
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
-        <div className={styles.cell} style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }} />
+        {board.map((row, y) =>
+          row.map((cell, x) => (
+            <div
+              className={styles.cell}
+              key={`${x}-${y}`}
+              onClick={() => clickHandler(x, y)}
+              style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }}
+            />
+          )),
+        )}
       </div>
     </div>
   );
