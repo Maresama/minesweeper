@@ -23,3 +23,10 @@
   background: url('~/src/assets/images/image.png') no-repeat;
   border: 1px solid black;
 }
+
+.cover {
+  width: 30px;
+  height: 30px;
+  background-color: rgb(207 207 207);
+  border: 1px solid black;
+}
