@@ -12,7 +12,7 @@
   display: grid;
   grid-template-columns: repeat(9, 30px);
   width: 270px;
-  height: 330px;
+  height: 270px;
   background-color: rgb(207 207 207);
   border: 1px solid black;
 }
@@ -24,9 +24,23 @@
   border: 1px solid black;
 }
 
+.mineBoard {
+  display: grid;
+  grid-template-columns: repeat(9, 30px);
+  width: 270px;
+  height: 270px;
+  background-color: rgb(207 207 207);
+  border: 1px solid black;
+}
+
 .cover {
   width: 30px;
   height: 30px;
   background-color: rgb(207 207 207);
   border: 1px solid black;
+}
+
+.mine {
+  width: 25px;
+  height: 25px;
 }
