@@ -2,16 +2,33 @@
 
 import { useState } from 'react';
 import styles from './page.module.css';
+
+//爆弾の設定
+const MINES = -1;
+const MINE_COUNT = 10;
 //爆弾の数をカウント
-const chackMines = (board: number[][], x: number, y: number) => {
+const chackMines = (minesBoard: number[][], x: number, y: number) => {
+  const directions = [
+    [1, 0], //下
+    [-1, 0], //上
+    [0, -1], //左
+    [1, -1], //左下
+    [-1, -1], //左上
+    [1, 1], //右上
+    [0, 1], //右
+    [-1, 1], //右下
+  ];
   let count = 0;
-  for (let dy = -1; dy <= 1; dy++) {
-    for (let dx = -1; dx <= 1; dx++) {
-      if (dx === 0 && dy === 0) continue;
-      const nx = x + dx;
-      const ny = y + dy;
-      if (ny >= 0 && ny < board.length && nx >= 0 && nx < board[0].length) {
-        if (board[ny][nx] === 1) count++;
+  for (let y = 0; y < 9; y++) {
+    for (let x = 0; x < 9; x++) {
+      if (minesBoard[y][x] !== 0) continue;
+      for (let i = 0; i < directions.length; i++) {
+        const [dy, dx] = directions[i];
+        const cy = y + dy;
+        const cx = x + dx;
+        if (cy >= 0 && cy < 9 && cx >= 0 && cx < 9 && minesBoard[cy][cx] === -1) {
+          count++;
+        }
       }
     }
   }
@@ -19,8 +36,6 @@ const chackMines = (board: number[][], x: number, y: number) => {
 };
 
 const randomMines = (minesBoard: number[][], minesCount: number) => {
-  const MINES = -1;
-  const MINE_COUNT = 10;
   let placed = 0;
   while (placed < MINE_COUNT) {
     const x = Math.floor(Math.random() * 10);
@@ -30,6 +45,7 @@ const randomMines = (minesBoard: number[][], minesCount: number) => {
       placed++;
     }
   }
+  return minesBoard;
 };
 
 export default function Home() {
