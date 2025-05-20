@@ -6,8 +6,23 @@ import styles from './page.module.css';
 //爆弾の設定
 const MINES = -1;
 const MINE_COUNT = 10;
+
+const randomMines = (minesBoard: number[][], minesCount: number) => {
+  let placed = 0;
+  while (placed < MINE_COUNT) {
+    const x = Math.floor(Math.random() * 10);
+    const y = Math.floor(Math.random() * 10);
+    if (minesBoard[y][x] !== MINES) {
+      minesBoard[y][x] = MINES;
+      placed++;
+    }
+  }
+  return minesBoard;
+};
+
 //爆弾の数をカウント
 const chackMines = (minesBoard: number[][], x: number, y: number) => {
+  //8方向
   const directions = [
     [1, 0], //下
     [-1, 0], //上
@@ -18,6 +33,7 @@ const chackMines = (minesBoard: number[][], x: number, y: number) => {
     [0, 1], //右
     [-1, 1], //右下
   ];
+  //盤面内で8方向確認して爆弾(-1)があれば、カウント+1
   let count = 0;
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
@@ -35,23 +51,8 @@ const chackMines = (minesBoard: number[][], x: number, y: number) => {
   return count;
 };
 
-const randomMines = (minesBoard: number[][], minesCount: number) => {
-  let placed = 0;
-  while (placed < MINE_COUNT) {
-    const x = Math.floor(Math.random() * 10);
-    const y = Math.floor(Math.random() * 10);
-    if (minesBoard[y][x] !== MINES) {
-      minesBoard[y][x] = MINES;
-      placed++;
-    }
-  }
-  return minesBoard;
-};
-
 export default function Home() {
   const [sanpleConuter, setSanpleCounter] = useState(0);
-  const [numbers, setNumbers] = useState([0, 0, 0, 0, 0]);
-  console.log(numbers);
 
   //爆弾を設置するボード
   const [minesBoard, setMinesBoard] = useState([
@@ -81,24 +82,22 @@ export default function Home() {
   const clickHandler = (x: number, y: number) => {
     setSanpleCounter((sanpleConuter + 1) % 14); //余り
     console.log(sanpleConuter);
-    const newNumbers = structuredClone(numbers);
-    newNumbers[sanpleConuter % 5] += 1;
-    setNumbers(newNumbers);
   };
 
   return (
     <div className={styles.container}>
       <p>Mine</p>
-      <span />
+
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((cell, x) => (
             <div
-              className={styles.cell}
+              className={`${styles.cell} ${minesBoard[y][x] === MINES ? styles.red : styles.white}`}
               key={`${x}-${y}`}
               onClick={() => clickHandler(x, y)}
-              style={{ backgroundPosition: ` ${-30 * sanpleConuter}px` }}
-            />
+            >
+              {board[y][x] !== 0 ? board[y][x] : ''}
+            </div>
           )),
         )}
       </div>
