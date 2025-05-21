@@ -23,7 +23,7 @@
   justify-content: center;
   width: 30px;
   height: 30px;
-  background: url('~/src/assets/images/image.png') no-repeat;
+  background-color: #ccc;
   border: 1px solid rgb(0 0 0);
 }
 
@@ -44,5 +44,12 @@
 }
 
 .mine {
-  background-position: -300px; /* 爆弾画像の位置 */
+  background-image: url('/path/to/your/spritesheet.png');
+  background-repeat: no-repeat;
+  background-position: -300px 0; /* 爆弾画像の位置をX方向-300pxに調整 */
+}
+
+.revealed.mine {
+  background: url('~/src/assets/images/image.png') no-repeat;
+  background-position: -300px 0; /* 位置調整したい場合 */
 }
