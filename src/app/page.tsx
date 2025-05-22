@@ -19,7 +19,7 @@ const randomMinesBoard = (minesBoard: number[][]) => {
   }
   return minesBoard;
 };
-
+console.log(randomMinesBoard);
 //爆弾の数をカウント
 const checkMines = (minesBoard: number[][], x: number, y: number) => {
   //8方向
@@ -35,19 +35,16 @@ const checkMines = (minesBoard: number[][], x: number, y: number) => {
   ];
   //盤面内で8方向確認して爆弾(-1)があれば、カウント+1
   let count = 0;
-  for (let y = 0; y < 9; y++) {
-    for (let x = 0; x < 9; x++) {
-      if (minesBoard[y][x] !== 0) continue;
-      for (let i = 0; i < directions.length; i++) {
-        const [dy, dx] = directions[i];
-        const cy = y + dy;
-        const cx = x + dx;
-        if (cy >= 0 && cy < 9 && cx >= 0 && cx < 9 && minesBoard[cy][cx] === -1) {
-          count++;
-        }
+  for (const [dy, dx] of directions) {
+    const cy = y + dy;
+    const cx = x + dx;
+    if (cy >= 0 && cy < minesBoard.length && cx >= 0 && cx < minesBoard[0].length) {
+      if (minesBoard[cy][cx] === -1) {
+        count++;
       }
     }
   }
+
   return count;
 };
 const generateBoard = (minesBoard: number[][]): number[][] => {
@@ -60,8 +57,6 @@ const generateBoard = (minesBoard: number[][]): number[][] => {
 };
 
 export default function Home() {
-  const [sanpleCounter, setSanpleCounter] = useState(0);
-
   //爆弾を設置するボード
   const [minesBoard, setMinesBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -74,7 +69,19 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
-  //爆弾があれば個数を返すボード
+  //旗を設置するボード
+  const [flagBoard, setflagBoard] = useState([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ]);
+  //視覚可能ボード
   const [board, setBoard] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -93,7 +100,7 @@ export default function Home() {
     if (!started) {
       // 最初のクリック時にランダムに爆弾設置
       setMinesBoard(randomMinesBoard);
-
+      console.log(setMinesBoard);
       setStarted(true);
     }
   };
