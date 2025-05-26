@@ -132,7 +132,7 @@ export default function Home() {
               onClick={() => clickHandler(x, y)}
             >
               {cell !== MINES ? cell || '' : ''}
-              <div className={styles.coverCell} />
+              {!opened[y][x] && <div className={styles.coverCell} />}
             </div>
           )),
         )}
