@@ -7,19 +7,21 @@ import styles from './page.module.css';
 const MINES = -1;
 const MINE_COUNT = 10;
 
-const randomMinesBoard = (minesBoard: number[][]) => {
+const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) => {
   let placed = 0;
   while (placed < MINE_COUNT) {
     const x = Math.floor(Math.random() * 9);
     const y = Math.floor(Math.random() * 9);
-    if (minesBoard[y][x] !== MINES) {
-      minesBoard[y][x] = MINES;
-      placed++;
+    if ((x === safeX && y === safeY) || minesBoard[y][x] === MINES) {
+      continue;
     }
+    minesBoard[y][x] = MINES;
+    placed++;
   }
   return minesBoard;
 };
 console.log(randomMinesBoard);
+
 //爆弾の数をカウント
 const checkMines = (minesBoard: number[][], x: number, y: number) => {
   //8方向
@@ -47,6 +49,7 @@ const checkMines = (minesBoard: number[][], x: number, y: number) => {
 
   return count;
 };
+//盤面全体を処理し、各マスにその周囲の爆弾数を設定
 const generateBoard = (minesBoard: number[][]): number[][] => {
   return minesBoard.map((row, y) =>
     row.map((cell, x) => {
@@ -93,22 +96,33 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+
   //ゲーム開始判定
   const [started, setStarted] = useState(false);
-  //クリックしたらsetNumbersにnewNumbersを代入
+  //開いているマスか開いていないマスかをuseStateで管理
+  const [opened, setOpened] = useState<boolean[][]>(
+    Array.from({ length: 9 }, (): boolean[] => {
+      return Array(9).fill(false) as boolean[];
+    }),
+  );
+  //ユーザーがクリックしたとき
   const clickHandler = (x: number, y: number) => {
     if (!started) {
-      // 最初のクリック時にランダムに爆弾設置
-      setMinesBoard(randomMinesBoard);
-      console.log(setMinesBoard);
+      // 最初のクリック時にランダムに爆弾設置を表示
+      const newMinesBoard = randomMinesBoard([...minesBoard.map((row) => [...row])], x, y);
+      const numberBoard = generateBoard(newMinesBoard);
+      setMinesBoard(newMinesBoard);
+      setBoard(numberBoard);
       setStarted(true);
     }
+    //useStateで管理されている関数のボードをコピーし、選択したマスにTrueをいれて開いたことにする
+    const newOpened = opened.map((row) => [...row]);
+    newOpened[y][x] = true;
+    setOpened(newOpened);
   };
 
   return (
     <div className={styles.container}>
-      <p>Mine</p>
-
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((cell, x) => (
@@ -118,6 +132,7 @@ export default function Home() {
               onClick={() => clickHandler(x, y)}
             >
               {cell !== MINES ? cell || '' : ''}
+              <div className={styles.coverCell} />
             </div>
           )),
         )}

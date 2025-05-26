@@ -36,15 +36,14 @@
   border: 1px solid black;
 }
 
-.cover {
+.coverCell {
   width: 30px;
   height: 30px;
-  background-color: rgb(207 207 207);
-  border: 1px solid black;
+  background: url('~/src/assets/images/imageCell.png');
 }
 
 .mine {
-  background-image: url('/path/to/your/spritesheet.png');
+  background-image: url('~/src/assets/images/image.png');
   background-repeat: no-repeat;
   background-position: -300px 0; /* 爆弾画像の位置をX方向-300pxに調整 */
 }
