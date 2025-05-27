@@ -7,6 +7,18 @@ import styles from './page.module.css';
 const MINES = -1;
 const MINE_COUNT = 10;
 
+//8方向
+const directions: [number, number][] = [
+  [1, 0], //下
+  [-1, 0], //上
+  [0, -1], //左
+  [1, -1], //左下
+  [-1, -1], //左上
+  [1, 1], //右上
+  [0, 1], //右
+  [-1, 1], //右下
+];
+
 const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) => {
   let placed = 0;
   while (placed < MINE_COUNT) {
@@ -23,23 +35,12 @@ const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) 
 console.log(randomMinesBoard);
 
 //爆弾の数をカウント
-const checkMines = (minesBoard: number[][], x: number, y: number) => {
-  //8方向
-  const directions = [
-    [1, 0], //下
-    [-1, 0], //上
-    [0, -1], //左
-    [1, -1], //左下
-    [-1, -1], //左上
-    [1, 1], //右上
-    [0, 1], //右
-    [-1, 1], //右下
-  ];
+const checkMines = (minesBoard: number[][], x: number, y: number): number => {
   //盤面内で8方向確認して爆弾(-1)があれば、カウント+1
   let count = 0;
-  for (const [dy, dx] of directions) {
-    const cy = y + dy;
-    const cx = x + dx;
+  for (const [dx, dy] of directions) {
+    const cy: number = y + dy;
+    const cx: number = x + dx;
     if (cy >= 0 && cy < minesBoard.length && cx >= 0 && cx < minesBoard[0].length) {
       if (minesBoard[cy][cx] === -1) {
         count++;
@@ -49,6 +50,7 @@ const checkMines = (minesBoard: number[][], x: number, y: number) => {
 
   return count;
 };
+
 //盤面全体を処理し、各マスにその周囲の爆弾数を設定
 const generateBoard = (minesBoard: number[][]): number[][] => {
   return minesBoard.map((row, y) =>
@@ -57,6 +59,18 @@ const generateBoard = (minesBoard: number[][]): number[][] => {
       return checkMines(minesBoard, x, y);
     }),
   );
+};
+
+//再帰関数 空白を連続で開ける
+const consecutive = (x: number, y: number, numberBoard: number[][], newOpened: boolean[][]) => {
+  if (x < 0 || x >= 9 || y < 0 || y >= 9) return;
+  if (newOpened[y][x]) return;
+  newOpened[y][x] = true;
+  if (numberBoard[y][x] === 0) {
+    for (const [dx, dy] of directions) {
+      consecutive(x + dx, y + dy, numberBoard, newOpened); // 周囲に再帰
+    }
+  }
 };
 
 export default function Home() {
@@ -73,7 +87,7 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
   //旗を設置するボード
-  const [flagBoard, setflagBoard] = useState([
+  const [userInput, setUserInput] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -99,12 +113,14 @@ export default function Home() {
 
   //ゲーム開始判定
   const [started, setStarted] = useState(false);
+
   //開いているマスか開いていないマスかをuseStateで管理
   const [opened, setOpened] = useState<boolean[][]>(
     Array.from({ length: 9 }, (): boolean[] => {
       return Array(9).fill(false) as boolean[];
     }),
   );
+
   //ユーザーがクリックしたとき
   const clickHandler = (x: number, y: number) => {
     if (!started) {
@@ -113,11 +129,17 @@ export default function Home() {
       const numberBoard = generateBoard(newMinesBoard);
       setMinesBoard(newMinesBoard);
       setBoard(numberBoard);
+
       setStarted(true);
     }
+
     //useStateで管理されている関数のボードをコピーし、選択したマスにTrueをいれて開いたことにする
     const newOpened = opened.map((row) => [...row]);
+
     newOpened[y][x] = true;
+
+    //再帰関数 空白を連続で開ける
+    consecutive(x, y, board, newOpened);
     setOpened(newOpened);
   };
 
@@ -131,7 +153,13 @@ export default function Home() {
               className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
               onClick={() => clickHandler(x, y)}
             >
-              {cell !== MINES ? cell || '' : ''}
+              {cell !== MINES && opened[y][x] && (
+                <div
+                  className={styles.cellCount}
+                  style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
+                />
+              )}
+
               {!opened[y][x] && <div className={styles.coverCell} />}
             </div>
           )),

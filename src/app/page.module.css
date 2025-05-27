@@ -13,7 +13,7 @@
   grid-template-columns: repeat(9, 30px);
   width: 270px;
   height: 270px;
-  background-color: rgb(207 207 207);
+  background-color: rgb(121 118 118);
   border: 1px solid black;
 }
 
@@ -24,7 +24,7 @@
   width: 30px;
   height: 30px;
   line-height: 30px;
-  background-color: #ccc;
+  background-color: #a5a3a3;
   border: 1px solid rgb(0 0 0);
 }
 
@@ -51,7 +51,10 @@
   background-position: -300px 0; /* 爆弾画像の位置をX方向-300pxに調整 */
 }
 
-.revealed.mine {
-  background: url('~/src/assets/images/image.png') no-repeat;
-  background-position: -300px 0; /* 位置調整したい場合 */
+.cellCount {
+  width: 100%;
+  height: 100%;
+  background-image: url('~/src/assets/images/image.png');
+  background-repeat: no-repeat;
+  background-size: auto; /* 必要に応じて調整 */
 }
