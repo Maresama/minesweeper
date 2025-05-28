@@ -145,7 +145,9 @@ export default function Home() {
   const rightClickHandler = (e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault(); // ブラウザのデフォルトの右クリックメニューを無効化
     const newUserInput = structuredClone(userInput);
+    newUserInput[y][x] = 1;
     setUserInput(newUserInput);
+    console.log(setUserInput);
   };
 
   return (
@@ -166,10 +168,9 @@ export default function Home() {
               )}
 
               {!opened[y][x] && (
-                <div className={styles.coverCell}>
+                <div className={styles.coverCell} onContextMenu={(e) => rightClickHandler(e, x, y)}>
                   <div
-                    className={`${styles.flag} ${2 - userInput[y][x] === 1 ? styles.flag : 2}`}
-                    onContextMenu={(e) => rightClickHandler(e, x, y)}
+                    className={`${styles.flag} ${userInput[y][x] === 1 ? styles.flagVisible : ''}`}
                   />
                 </div>
               )}
