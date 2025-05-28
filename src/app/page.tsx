@@ -86,7 +86,7 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
-  //旗を設置するボード
+  //ユーザーが入力するボード
   const [userInput, setUserInput] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -129,18 +129,23 @@ export default function Home() {
       const numberBoard = generateBoard(newMinesBoard);
       setMinesBoard(newMinesBoard);
       setBoard(numberBoard);
-
       setStarted(true);
     }
 
     //useStateで管理されている関数のボードをコピーし、選択したマスにTrueをいれて開いたことにする
     const newOpened = opened.map((row) => [...row]);
-
     newOpened[y][x] = true;
 
     //再帰関数 空白を連続で開ける
-    consecutive(x, y, board, newOpened);
+    consecutive(x, y, board, newOpened); //boardだと古い情報で再帰が機能しない
     setOpened(newOpened);
+  };
+
+  //右クリック操作（旗、はてな、空白）
+  const rightClickHandler = (e: React.MouseEvent, x: number, y: number) => {
+    e.preventDefault(); // ブラウザのデフォルトの右クリックメニューを無効化
+    const newUserInput = structuredClone(userInput);
+    setUserInput(newUserInput);
   };
 
   return (
@@ -160,7 +165,14 @@ export default function Home() {
                 />
               )}
 
-              {!opened[y][x] && <div className={styles.coverCell} />}
+              {!opened[y][x] && (
+                <div className={styles.coverCell}>
+                  <div
+                    className={`${styles.flag} ${2 - userInput[y][x] === 1 ? styles.flag : 2}`}
+                    onContextMenu={(e) => rightClickHandler(e, x, y)}
+                  />
+                </div>
+              )}
             </div>
           )),
         )}

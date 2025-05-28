@@ -51,6 +51,12 @@
   background-position: -300px 0; /* 爆弾画像の位置をX方向-300pxに調整 */
 }
 
+.flag {
+  background-image: url('~/src/assets/images/image.png');
+  background-repeat: no-repeat;
+  background-position: -270px 0; /* 爆弾画像の位置をX方向-300pxに調整 */
+}
+
 .cellCount {
   width: 100%;
   height: 100%;
