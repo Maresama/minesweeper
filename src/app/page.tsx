@@ -153,36 +153,31 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.bigBoard}>
-        <div className={styles.board}>
-          {board.map((row, y) =>
-            row.map((cell, x) => (
-              <div
-                key={`${x}-${y}`}
-                className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
-                onClick={() => clickHandler(x, y)}
-              >
-                {cell !== MINES && opened[y][x] && (
-                  <div
-                    className={styles.cellCount}
-                    style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
-                  />
-                )}
+      <div className={styles.board}>
+        {board.map((row, y) =>
+          row.map((cell, x) => (
+            <div
+              key={`${x}-${y}`}
+              className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
+              onClick={() => clickHandler(x, y)}
+            >
+              {cell !== MINES && opened[y][x] && (
+                <div
+                  className={styles.cellCount}
+                  style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
+                />
+              )}
 
-                {!opened[y][x] && (
+              {!opened[y][x] && (
+                <div className={styles.coverCell} onContextMenu={(e) => rightClickHandler(e, x, y)}>
                   <div
-                    className={styles.coverCell}
-                    onContextMenu={(e) => rightClickHandler(e, x, y)}
-                  >
-                    <div
-                      className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
-                    />
-                  </div>
-                )}
-              </div>
-            )),
-          )}
-        </div>
+                    className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
+                  />
+                </div>
+              )}
+            </div>
+          )),
+        )}
       </div>
     </div>
   );
