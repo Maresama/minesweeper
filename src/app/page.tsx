@@ -138,7 +138,19 @@ export default function Home() {
     } else {
       openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
     }
+    if (board[y][x] === MINES) {
+      alert('ゲームオーバー');
+      for (let i = 0; i < 9; i++) {
+        for (let k = 0; k < 9; k++) {
+          if (minesBoard[i][k] === MINES) {
+            newOpened[i][k] = true;
+          }
+        }
+      }
 
+      setOpened(newOpened); // 全爆弾を開く
+      return; // 処理終了（再帰開けなど行わない）
+    }
     setOpened(newOpened);
   };
 
