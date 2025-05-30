@@ -52,7 +52,7 @@ const checkMines = (minesBoard: number[][], x: number, y: number): number => {
 };
 
 //盤面全体を処理し、各マスにその周囲の爆弾数を設定
-const generateBoard = (minesBoard: number[][]): number[][] => {
+const numberBoard = (minesBoard: number[][]): number[][] => {
   return minesBoard.map((row, y) =>
     row.map((cell, x) => {
       if (cell === MINES) return MINES;
@@ -73,6 +73,19 @@ const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][
       openCell(x + dx, y + dy, board, newOpened);
     }
   }
+};
+
+const falseBoard = (board: boolean[][]): number => {
+  let falseCount = 0;
+  const falseBoardFill = structuredClone(Array(9).fill(false));
+  for (let y = 0; y < 9; y++) {
+    for (let x = 0; x < 9; x++) {
+      if (board[y][x] === false) {
+        falseCount++;
+      }
+    }
+  }
+  return falseCount;
 };
 
 export default function Home() {
@@ -129,12 +142,12 @@ export default function Home() {
     if (!started) {
       // 最初のクリック時にランダムに爆弾設置を表示
       const newMinesBoard = randomMinesBoard([...minesBoard.map((row) => [...row])], x, y);
-      const numberBoard = generateBoard(newMinesBoard);
+      const allBoard = numberBoard(newMinesBoard);
       setMinesBoard(newMinesBoard);
-      setBoard(numberBoard);
+      setBoard(allBoard);
       setStarted(true);
 
-      openCell(x, y, numberBoard, newOpened);
+      openCell(x, y, allBoard, newOpened);
     } else {
       openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
     }
@@ -147,10 +160,17 @@ export default function Home() {
           }
         }
       }
-
+      console.log(newOpened);
       setOpened(newOpened); // 全爆弾を開く
-      return; // 処理終了（再帰開けなど行わない）
+      return; // 処理終了
+    } else {
+      const reman = falseBoard(newOpened); //開いてないところをカウント
+      if (reman === MINE_COUNT) {
+        //numberにして比較
+        alert('勝利！！！');
+      }
     }
+
     setOpened(newOpened);
   };
 
