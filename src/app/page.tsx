@@ -8,15 +8,15 @@ const MINES = -1;
 const MINE_COUNT = 10;
 
 //8方向
-const directions: [number, number][] = [
-  [1, 0], //下
-  [-1, 0], //上
-  [0, -1], //左
-  [1, -1], //左下
-  [-1, -1], //左上
-  [1, 1], //右上
-  [0, 1], //右
-  [-1, 1], //右下
+const directions = [
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, -1],
+  [0, 1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
 ];
 
 const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) => {
@@ -62,13 +62,15 @@ const generateBoard = (minesBoard: number[][]): number[][] => {
 };
 
 //再帰関数 空白を連続で開ける
-const consecutive = (x: number, y: number, numberBoard: number[][], newOpened: boolean[][]) => {
+const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][]) => {
   if (x < 0 || x >= 9 || y < 0 || y >= 9) return;
   if (newOpened[y][x]) return;
   newOpened[y][x] = true;
-  if (numberBoard[y][x] === 0) {
+  if (board[y][x] !== 0) {
+    return;
+  } else {
     for (const [dx, dy] of directions) {
-      consecutive(x + dx, y + dy, numberBoard, newOpened); // 周囲に再帰
+      openCell(x + dx, y + dy, board, newOpened);
     }
   }
 };
@@ -123,6 +125,7 @@ export default function Home() {
 
   //ユーザーがクリックしたとき
   const clickHandler = (x: number, y: number) => {
+    const newOpened = opened.map((row) => [...row]);
     if (!started) {
       // 最初のクリック時にランダムに爆弾設置を表示
       const newMinesBoard = randomMinesBoard([...minesBoard.map((row) => [...row])], x, y);
@@ -130,14 +133,16 @@ export default function Home() {
       setMinesBoard(newMinesBoard);
       setBoard(numberBoard);
       setStarted(true);
+
+      //useStateで管理されている関数のボードをコピーし、選択したマスにTrueをいれて開いたことにする
+      const newOpened = opened.map((row) => [...row]);
+      newOpened[y][x] = true;
+
+      openCell(x, y, numberBoard, newOpened);
+    } else {
+      openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
     }
 
-    //useStateで管理されている関数のボードをコピーし、選択したマスにTrueをいれて開いたことにする
-    const newOpened = opened.map((row) => [...row]);
-    newOpened[y][x] = true;
-
-    //再帰関数 空白を連続で開ける
-    consecutive(x, y, board, newOpened); //boardだと古い情報で再帰が機能しない
     setOpened(newOpened);
   };
 
@@ -145,38 +150,43 @@ export default function Home() {
   const rightClickHandler = (e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault(); // ブラウザのデフォルトの右クリックメニューを無効化
     const newUserInput = structuredClone(userInput);
-    newUserInput[y][x] = 1;
+    newUserInput[y][x]++;
+    newUserInput[y][x] = newUserInput[y][x] % 3;
     setUserInput(newUserInput);
-    console.log(setUserInput);
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.board}>
-        {board.map((row, y) =>
-          row.map((cell, x) => (
-            <div
-              key={`${x}-${y}`}
-              className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
-              onClick={() => clickHandler(x, y)}
-            >
-              {cell !== MINES && opened[y][x] && (
-                <div
-                  className={styles.cellCount}
-                  style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
-                />
-              )}
-
-              {!opened[y][x] && (
-                <div className={styles.coverCell} onContextMenu={(e) => rightClickHandler(e, x, y)}>
+      <div className={styles.bigBoard}>
+        <div className={styles.board}>
+          {board.map((row, y) =>
+            row.map((cell, x) => (
+              <div
+                key={`${x}-${y}`}
+                className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
+                onClick={() => clickHandler(x, y)}
+              >
+                {cell !== MINES && opened[y][x] && (
                   <div
-                    className={`${styles.flag} ${userInput[y][x] === 1 ? styles.flagVisible : ''}`}
+                    className={styles.cellCount}
+                    style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
                   />
-                </div>
-              )}
-            </div>
-          )),
-        )}
+                )}
+
+                {!opened[y][x] && (
+                  <div
+                    className={styles.coverCell}
+                    onContextMenu={(e) => rightClickHandler(e, x, y)}
+                  >
+                    <div
+                      className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
+                    />
+                  </div>
+                )}
+              </div>
+            )),
+          )}
+        </div>
       </div>
     </div>
   );
