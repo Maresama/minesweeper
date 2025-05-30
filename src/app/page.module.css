@@ -8,6 +8,15 @@
   padding: 0 0.5rem;
 }
 
+.bigBoard {
+  width: 300px;
+  height: 600px;
+  padding-top: 92px;
+  padding-left: 20px;
+  background-image: url('~/src/assets/images/big.png');
+  background-repeat: no-repeat;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(9, 30px);
@@ -65,7 +74,7 @@
   background-image: url('~/src/assets/images/image.png');
   background-repeat: no-repeat;
   background-position: -270px 0; /* 旗画像-270pxに調整 */
-  background-size: cover;
+  background-size: -270px 30px;
 }
 
 .questionmark {
@@ -74,7 +83,7 @@
   background-image: url('~/src/assets/images/image.png');
   background-repeat: no-repeat;
   background-position: -240px 0; /* 旗画像-270pxに調整 */
-  background-size: cover;
+  background-size: -240px 30px;
 }
 
 .cellCount {

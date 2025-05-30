@@ -146,11 +146,13 @@ export default function Home() {
       setMinesBoard(newMinesBoard);
       setBoard(allBoard);
       setStarted(true);
+      console.log(board);
 
       openCell(x, y, allBoard, newOpened);
     } else {
       openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
     }
+    console.log(board);
     if (board[y][x] === MINES) {
       alert('ゲームオーバー');
       for (let i = 0; i < 9; i++) {
@@ -185,31 +187,36 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.board}>
-        {board.map((row, y) =>
-          row.map((cell, x) => (
-            <div
-              key={`${x}-${y}`}
-              className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
-              onClick={() => clickHandler(x, y)}
-            >
-              {cell !== MINES && opened[y][x] && (
-                <div
-                  className={styles.cellCount}
-                  style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
-                />
-              )}
-
-              {!opened[y][x] && (
-                <div className={styles.coverCell} onContextMenu={(e) => rightClickHandler(e, x, y)}>
+      <div className={styles.bigBoard}>
+        <div className={styles.board}>
+          {board.map((row, y) =>
+            row.map((cell, x) => (
+              <div
+                key={`${x}-${y}`}
+                className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
+                onClick={() => clickHandler(x, y)}
+              >
+                {cell !== MINES && opened[y][x] && (
                   <div
-                    className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
+                    className={styles.cellCount}
+                    style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
                   />
-                </div>
-              )}
-            </div>
-          )),
-        )}
+                )}
+
+                {!opened[y][x] && (
+                  <div
+                    className={styles.coverCell}
+                    onContextMenu={(e) => rightClickHandler(e, x, y)}
+                  >
+                    <div
+                      className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
+                    />
+                  </div>
+                )}
+              </div>
+            )),
+          )}
+        </div>
       </div>
     </div>
   );
