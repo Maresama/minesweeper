@@ -134,10 +134,6 @@ export default function Home() {
       setBoard(numberBoard);
       setStarted(true);
 
-      //useStateで管理されている関数のボードをコピーし、選択したマスにTrueをいれて開いたことにする
-      const newOpened = opened.map((row) => [...row]);
-      newOpened[y][x] = true;
-
       openCell(x, y, numberBoard, newOpened);
     } else {
       openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
