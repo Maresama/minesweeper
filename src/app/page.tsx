@@ -135,6 +135,9 @@ export default function Home() {
       return Array(9).fill(false) as boolean[];
     }),
   );
+  //タイマー
+  const [time, setTime] = useState(0); // 経過時間（秒）
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
   //ユーザーがクリックしたとき
   const clickHandler = (x: number, y: number) => {
@@ -147,7 +150,11 @@ export default function Home() {
       setBoard(allBoard);
       setStarted(true);
       console.log(board);
-
+      //タイム1000秒まで
+      const id = setInterval(() => {
+        setTime((prev) => prev + 1);
+      }, 1000);
+      setTimerId(id);
       openCell(x, y, allBoard, newOpened);
     } else {
       openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
@@ -155,6 +162,7 @@ export default function Home() {
     console.log(board);
     if (board[y][x] === MINES) {
       alert('ゲームオーバー');
+      if (timerId) clearInterval(timerId); // タイマー停止
       for (let i = 0; i < 9; i++) {
         for (let k = 0; k < 9; k++) {
           if (minesBoard[i][k] === MINES) {
@@ -170,6 +178,7 @@ export default function Home() {
       if (reman === MINE_COUNT) {
         //numberにして比較
         alert('勝利！！！');
+        if (timerId) clearInterval(timerId); // タイマー停止
       }
     }
 
@@ -187,13 +196,15 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.timer}>{String(time).padStart(3, '0')}</div>
       <div className={styles.bigBoard}>
         <div className={styles.board}>
           {board.map((row, y) =>
             row.map((cell, x) => (
               <div
                 key={`${x}-${y}`}
-                className={`${styles.cell} ${cell === MINES ? styles.mine : ''}`}
+                className={`${styles.cell} ${cell === MINES ? styles.mine : ''}
+                ${opened[y][x] && cell === MINES ? styles.overCell : ''}`}
                 onClick={() => clickHandler(x, y)}
               >
                 {cell !== MINES && opened[y][x] && (

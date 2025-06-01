@@ -40,7 +40,7 @@
 .overCell {
   width: 30px;
   height: 30px;
-  background-color: #f00;
+  background-color: rgb(255 39 39);
   border: 1px solid rgb(0 0 0);
 }
 
@@ -92,4 +92,27 @@
   background-image: url('~/src/assets/images/image.png');
   background-repeat: no-repeat;
   background-size: auto; /* 必要に応じて調整 */
+}
+
+/* リセットボタン */
+.container button {
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  background-color: #4caf50; /* 緑 */
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.timer {
+  width: 70px;
+  height: 70px;
+  padding: 8px;
+  font-size: 32px;
+  color: rgb(255 0 0);
+  letter-spacing: 2px;
+  background-color: #000;
 }
