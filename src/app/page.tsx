@@ -196,8 +196,25 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.timer}>{String(time).padStart(3, '0')}</div>
       <div className={styles.bigBoard}>
+        <div className={styles.states}>
+          <div className={styles.mineCountBoard} />
+          <div className={styles.timeBoard}>
+            <div
+              className={styles.timeDigit}
+              style={{ backgroundPosition: `${-70 * Math.floor(time / 100)}px ` }}
+            />
+            <div
+              className={styles.timeDigit}
+              style={{ backgroundPosition: `${-70 * Math.floor((time % 100) / 10)}px ` }}
+            />
+            <div
+              className={styles.timeDigit}
+              style={{ backgroundPosition: `${-70 * (time % 10)}px ` }}
+            />
+          </div>
+        </div>
+
         <div className={styles.board}>
           {board.map((row, y) =>
             row.map((cell, x) => (

@@ -8,22 +8,14 @@
   padding: 0 0.5rem;
 }
 
-.bigBoard {
-  width: 300px;
-  height: 600px;
-  padding-top: 92px;
-  padding-left: 20px;
-  background-image: url('~/src/assets/images/big.png');
-  background-repeat: no-repeat;
-}
-
 .board {
   display: grid;
   grid-template-columns: repeat(9, 30px);
   width: 270px;
   height: 270px;
-  background-color: rgb(121 118 118);
-  border: 1px solid black;
+  margin-top: -67px;
+  margin-left: 2.5px;
+  background-color: rgb(84 82 82);
 }
 
 .cell {
@@ -34,14 +26,13 @@
   height: 30px;
   line-height: 30px;
   background-color: #b5b5b5;
-  border: 1px solid rgb(0 0 0);
+  border: 0.5px solid rgb(130 128 128);
 }
 
 .overCell {
   width: 30px;
   height: 30px;
   background-color: rgb(255 39 39);
-  border: 1px solid rgb(0 0 0);
 }
 
 .mineBoard {
@@ -107,12 +98,46 @@
   transition: background-color 0.3s ease;
 }
 
-.timer {
+.states {
+  display: flex;
+  width: 400px;
+  height: 150px;
+}
+
+.mineCountBoard {
+  display: flex;
+  gap: 2px;
+  width: 86px;
+  height: 57px;
+  margin-bottom: 26px;
+  background-image: url('~/src/assets/images/timeboard.png');
+  background-repeat: no-repeat;
+}
+
+.timeBoard {
+  display: flex;
+  gap: 2px;
+  width: 86px;
+  height: 57px;
+  margin-bottom: 26px;
+  margin-left: 96px;
+  background-image: url('~/src/assets/images/timeboard.png');
+  background-repeat: no-repeat;
+}
+
+.timeDigit {
   width: 70px;
   height: 70px;
-  padding: 8px;
-  font-size: 32px;
-  color: rgb(255 0 0);
-  letter-spacing: 2px;
-  background-color: #000;
+  background-image: url('~/src/assets/images/time.png');
+  background-repeat: no-repeat;
+  background-size: 70px auto;
+}
+
+.bigBoard {
+  width: 500px;
+  height: 600px;
+  padding-top: 26px;
+  padding-left: 38px;
+  background-image: url('~/src/assets/images/big.png');
+  background-repeat: no-repeat;
 }
