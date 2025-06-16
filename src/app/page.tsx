@@ -88,6 +88,18 @@ const falseBoard = (board: boolean[][]): number => {
   return falseCount;
 };
 
+const countFlags = (userInput: number[][]): number => {
+  let count = 0;
+  for (let y = 0; y < userInput.length; y++) {
+    for (let x = 0; x < userInput[y].length; x++) {
+      if (userInput[y][x] === 1) {
+        count++;
+      }
+    }
+  }
+  return count;
+};
+
 const width = 9;
 const height = 9;
 
@@ -159,6 +171,7 @@ export default function Home() {
       setMinesBoard(newMinesBoard);
       setBoard(allBoard);
       setStarted(true);
+
       console.log(board);
       //タイム1000秒まで
       const id = setInterval(() => {
@@ -201,10 +214,30 @@ export default function Home() {
   const rightClickHandler = (e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault(); // ブラウザのデフォルトの右クリックメニューを無効化
     const newUserInput = structuredClone(userInput);
-    newUserInput[y][x]++;
-    newUserInput[y][x] = newUserInput[y][x] % 3;
+    const current = newUserInput[y][x];
+
+    // 旗の本数を事前に計算
+    const currentFlags = countFlags(userInput);
+
+    if (current === 0) {
+      // 旗を立てようとしている
+      if (currentFlags >= MINE_COUNT) {
+        // 旗の上限に達しているので何もしない
+        return;
+      }
+      newUserInput[y][x] = 1; // 旗を立てる
+    } else if (current === 1) {
+      newUserInput[y][x] = 2; // はてなマーク
+    } else if (current === 2) {
+      newUserInput[y][x] = 0; // 元に戻す
+    }
+
     setUserInput(newUserInput);
   };
+
+  //爆弾の数（旗の数）
+  const flagCount = countFlags(userInput);
+  const remainingMines = MINE_COUNT - flagCount;
 
   return (
     <div className={styles.container}>
@@ -212,9 +245,24 @@ export default function Home() {
         <div className={styles.bigBoard}>
           <div className={styles.states}>
             <div className={styles.mineCountBoard}>
-              <div className={styles.bombDigit} />
-              <div className={styles.bombDigit} />
-              <div className={styles.bombDigit} />
+              <div
+                className={styles.bombDigit}
+                style={{
+                  backgroundPosition: `${-20.7 * Math.floor(Number(remainingMines) / 100)}px`,
+                }}
+              />
+              <div
+                className={styles.bombDigit}
+                style={{
+                  backgroundPosition: `${-20.7 * Math.floor((Number(remainingMines) - Math.floor(time / 100) * 100) / 10)}px`,
+                }}
+              />
+              <div
+                className={styles.bombDigit}
+                style={{
+                  backgroundPosition: `${-20.7 * (remainingMines - Math.floor(Number(remainingMines) / 10) * 10)}px`,
+                }}
+              />
             </div>
             <div className={styles.timeBoard}>
               <div
