@@ -13,8 +13,6 @@
   grid-template-columns: repeat(9, 30px);
   width: 270px;
   height: 270px;
-  margin-top: -67px;
-  margin-left: 2.5px;
   background-color: rgb(84 82 82);
 }
 
@@ -98,46 +96,99 @@
   transition: background-color 0.3s ease;
 }
 
-.states {
-  display: flex;
-  width: 400px;
-  height: 150px;
-}
-
 .mineCountBoard {
   display: flex;
-  gap: 2px;
-  width: 86px;
-  height: 57px;
-  margin-bottom: 26px;
-  background-image: url('~/src/assets/images/timeboard.png');
-  background-repeat: no-repeat;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 80px;
+  height: 44px;
+  background-color: black;
 }
 
 .timeBoard {
   display: flex;
-  gap: 2px;
-  width: 86px;
-  height: 57px;
-  margin-bottom: 26px;
-  margin-left: 96px;
-  background-image: url('~/src/assets/images/timeboard.png');
-  background-repeat: no-repeat;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  width: 80px;
+  height: 44px;
+  background-color: black;
+}
+
+.timeNumber1 {
+  width: 21.8px;
+  height: 40px;
+  background-image: url('~/src/assets/images/time.png');
+}
+
+.timeNumber2 {
+  width: 22px;
+  height: 40px;
+  background-image: url('~/src/assets/images/time.png');
+}
+
+.timeNumber3 {
+  width: 22px;
+  height: 40px;
+  background-image: url('~/src/assets/images/time.png');
 }
 
 .timeDigit {
-  width: 70px;
-  height: 70px;
+  width: 22px;
+  height: 40px;
   background-image: url('~/src/assets/images/time.png');
-  background-repeat: no-repeat;
-  background-size: 70px auto;
+}
+
+.bombDigit {
+  width: 22px;
+  height: 40px;
+  background-image: url('~/src/assets/images/time.png');
 }
 
 .bigBoard {
-  width: 500px;
-  height: 600px;
-  padding-top: 26px;
-  padding-left: 38px;
-  background-image: url('~/src/assets/images/big.png');
+  width: 280px;
+  height: 360px;
   background-repeat: no-repeat;
+}
+
+.bigMamBoard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 310px;
+  height: 400px;
+  background-color: #c6c6c6;
+  border-top: solid 5px #fff;
+  border-right: solid 5px #808080;
+  border-bottom: solid 5px #808080;
+  border-left: solid 5px #fff;
+}
+
+.states {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-around;
+  width: 280px;
+  height: 70px;
+  margin-bottom: 13px;
+  background-color: #c6c6c6;
+  border-top: solid 5px #808080;
+  border-right: solid 5px #fff;
+  border-bottom: solid 5px #fff;
+  border-left: solid 5px #808080;
+}
+
+.gameBoard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 280px;
+  height: 280px;
+  background-color: #c6c6c6;
+  border-top: solid 5px #808080;
+  border-right: solid 5px #fff;
+  border-bottom: solid 5px #fff;
+  border-left: solid 5px #808080;
 }

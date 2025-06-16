@@ -88,6 +88,16 @@ const falseBoard = (board: boolean[][]): number => {
   return falseCount;
 };
 
+const width = 9;
+const height = 9;
+
+const resizeBorad = (length: number, length2: number): number[][] => {
+  const twoDimensionalArray: number[][] = Array.from({ length: length2 }, () =>
+    Array.from({ length }, () => 0),
+  );
+  return twoDimensionalArray;
+};
+
 export default function Home() {
   //爆弾を設置するボード
   const [minesBoard, setMinesBoard] = useState([
@@ -161,6 +171,8 @@ export default function Home() {
     }
     console.log(board);
     if (board[y][x] === MINES) {
+      userInput[y][x] = 4;
+      setUserInput(userInput);
       alert('ゲームオーバー');
       if (timerId) clearInterval(timerId); // タイマー停止
       for (let i = 0; i < 9; i++) {
@@ -196,54 +208,67 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.bigBoard}>
-        <div className={styles.states}>
-          <div className={styles.mineCountBoard} />
-          <div className={styles.timeBoard}>
-            <div
-              className={styles.timeDigit}
-              style={{ backgroundPosition: `${-70 * Math.floor(time / 100)}px ` }}
-            />
-            <div
-              className={styles.timeDigit}
-              style={{ backgroundPosition: `${-70 * Math.floor((time % 100) / 10)}px ` }}
-            />
-            <div
-              className={styles.timeDigit}
-              style={{ backgroundPosition: `${-70 * (time % 10)}px ` }}
-            />
-          </div>
-        </div>
-
-        <div className={styles.board}>
-          {board.map((row, y) =>
-            row.map((cell, x) => (
+      <div className={styles.bigMamBoard}>
+        <div className={styles.bigBoard}>
+          <div className={styles.states}>
+            <div className={styles.mineCountBoard}>
+              <div className={styles.bombDigit} />
+              <div className={styles.bombDigit} />
+              <div className={styles.bombDigit} />
+            </div>
+            <div className={styles.timeBoard}>
               <div
-                key={`${x}-${y}`}
-                className={`${styles.cell} ${cell === MINES ? styles.mine : ''}
-                ${opened[y][x] && cell === MINES ? styles.overCell : ''}`}
-                onClick={() => clickHandler(x, y)}
-              >
-                {cell !== MINES && opened[y][x] && (
+                className={styles.timeNumber1}
+                style={{
+                  backgroundPosition: `${-20.7 * Math.floor(time / 100)}px`,
+                }}
+              />
+              <div
+                className={styles.timeNumber2}
+                style={{
+                  backgroundPosition: `${-20.7 * Math.floor((time - Math.floor(time / 100) * 100) / 10)}px`,
+                }}
+              />
+              <div
+                className={styles.timeNumber3}
+                style={{
+                  backgroundPosition: `${-20.7 * (time - Math.floor(time / 10) * 10)}px`,
+                }}
+              />
+            </div>
+          </div>
+          <div className={styles.gameBoard}>
+            <div className={styles.board}>
+              {board.map((row, y) =>
+                row.map((cell, x) => (
                   <div
-                    className={styles.cellCount}
-                    style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
-                  />
-                )}
-
-                {!opened[y][x] && (
-                  <div
-                    className={styles.coverCell}
-                    onContextMenu={(e) => rightClickHandler(e, x, y)}
+                    key={`${x}-${y}`}
+                    className={`${styles.cell} ${cell === MINES ? styles.mine : ''}
+                ${opened[y][x] && userInput[y][x] === 4 ? styles.overCell : ''}`}
+                    onClick={() => clickHandler(x, y)}
                   >
-                    <div
-                      className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
-                    />
+                    {cell !== MINES && opened[y][x] && (
+                      <div
+                        className={styles.cellCount}
+                        style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
+                      />
+                    )}
+
+                    {!opened[y][x] && (
+                      <div
+                        className={styles.coverCell}
+                        onContextMenu={(e) => rightClickHandler(e, x, y)}
+                      >
+                        <div
+                          className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            )),
-          )}
+                )),
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
