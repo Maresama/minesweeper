@@ -75,9 +75,10 @@ const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][
   }
 };
 
+//開いていないところを数える
 const falseBoard = (board: boolean[][]): number => {
   let falseCount = 0;
-  const falseBoardFill = structuredClone(Array(9).fill(false));
+
   for (let y = 0; y < 9; y++) {
     for (let x = 0; x < 9; x++) {
       if (board[y][x] === false) {
@@ -88,6 +89,11 @@ const falseBoard = (board: boolean[][]): number => {
   return falseCount;
 };
 
+const resetBoard = (rows: number, cols: number): number[][] => {
+  return Array.from({ length: rows }, () => Array<number>(cols).fill(0));
+};
+
+//旗の数を数える
 const countFlags = (userInput: number[][]): number => {
   let count = 0;
   for (let y = 0; y < userInput.length; y++) {
@@ -98,16 +104,6 @@ const countFlags = (userInput: number[][]): number => {
     }
   }
   return count;
-};
-
-const width = 9;
-const height = 9;
-
-const resizeBorad = (length: number, length2: number): number[][] => {
-  const twoDimensionalArray: number[][] = Array.from({ length: length2 }, () =>
-    Array.from({ length }, () => 0),
-  );
-  return twoDimensionalArray;
 };
 
 export default function Home() {
@@ -220,7 +216,6 @@ export default function Home() {
     const currentFlags = countFlags(userInput);
 
     if (current === 0) {
-      // 旗を立てようとしている
       if (currentFlags >= MINE_COUNT) {
         // 旗の上限に達しているので何もしない
         return;
@@ -229,7 +224,7 @@ export default function Home() {
     } else if (current === 1) {
       newUserInput[y][x] = 2; // はてなマーク
     } else if (current === 2) {
-      newUserInput[y][x] = 0; // 元に戻す
+      newUserInput[y][x] = 0;
     }
 
     setUserInput(newUserInput);
@@ -238,6 +233,23 @@ export default function Home() {
   //爆弾の数（旗の数）
   const flagCount = countFlags(userInput);
   const remainingMines = MINE_COUNT - flagCount;
+
+  const resetGame = () => {
+    // タイマーを止める
+    if (timerId) {
+      clearInterval(timerId);
+      setTimerId(null);
+    }
+
+    // 初期状態に戻す
+
+    setMinesBoard(resetBoard(9, 9));
+    setUserInput(resetBoard(9, 9));
+    setBoard(resetBoard(9, 9));
+    setOpened(Array.from({ length: 9 }, () => Array<boolean>(9).fill(false)));
+    setTime(0);
+    setStarted(false);
+  };
 
   return (
     <div className={styles.container}>
@@ -262,6 +274,15 @@ export default function Home() {
                 style={{
                   backgroundPosition: `${-20.7 * (remainingMines - Math.floor(Number(remainingMines) / 10) * 10)}px`,
                 }}
+              />
+            </div>
+            <div className={styles.resetBoard}>
+              <div
+                className={styles.button}
+                style={{
+                  backgroundPosition: `-330px`,
+                }}
+                onClick={resetGame}
               />
             </div>
             <div className={styles.timeBoard}>
