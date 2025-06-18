@@ -5,7 +5,6 @@ import styles from './page.module.css';
 
 //爆弾の設定
 const MINES = -1;
-const MINE_COUNT = 10;
 
 //8方向
 const directions = [
@@ -19,9 +18,17 @@ const directions = [
   [1, 1],
 ];
 
-const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) => {
+//爆弾配置関数（width, heightを引数で受け取るように変更）
+const randomMinesBoard = (
+  minesBoard: number[][],
+  safeX: number,
+  safeY: number,
+  width: number,
+  height: number,
+  mineCount: number,
+) => {
   let placed = 0;
-  while (placed < MINE_COUNT) {
+  while (placed < mineCount) {
     const x = Math.floor(Math.random() * width);
     const y = Math.floor(Math.random() * height);
     if ((x === safeX && y === safeY) || minesBoard[y][x] === MINES) {
@@ -32,26 +39,23 @@ const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) 
   }
   return minesBoard;
 };
-console.log(randomMinesBoard);
 
 //爆弾の数をカウント
 const checkMines = (minesBoard: number[][], x: number, y: number): number => {
-  //盤面内で8方向確認して爆弾(-1)があれば、カウント+1
   let count = 0;
   for (const [dx, dy] of directions) {
-    const cy: number = y + dy;
-    const cx: number = x + dx;
+    const cy = y + dy;
+    const cx = x + dx;
     if (cy >= 0 && cy < minesBoard.length && cx >= 0 && cx < minesBoard[0].length) {
-      if (minesBoard[cy][cx] === -1) {
+      if (minesBoard[cy][cx] === MINES) {
         count++;
       }
     }
   }
-
   return count;
 };
 
-//盤面全体を処理し、各マスにその周囲の爆弾数を設定
+//盤面全体の数字盤を作成
 const numberBoard = (minesBoard: number[][]): number[][] => {
   return minesBoard.map((row, y) =>
     row.map((cell, x) => {
@@ -61,8 +65,15 @@ const numberBoard = (minesBoard: number[][]): number[][] => {
   );
 };
 
-//再帰関数 空白を連続で開ける
-const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][]) => {
+//再帰的に空白セルを開く
+const openCell = (
+  x: number,
+  y: number,
+  board: number[][],
+  newOpened: boolean[][],
+  width: number,
+  height: number,
+) => {
   if (x < 0 || x >= width || y < 0 || y >= height) return;
   if (newOpened[y][x]) return;
   newOpened[y][x] = true;
@@ -70,18 +81,17 @@ const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][
     return;
   } else {
     for (const [dx, dy] of directions) {
-      openCell(x + dx, y + dy, board, newOpened);
+      openCell(x + dx, y + dy, board, newOpened, width, height);
     }
   }
 };
 
-//開いていないところを数える
+//未開封セルの数をカウント
 const falseBoard = (board: boolean[][]): number => {
   let falseCount = 0;
-
-  for (let y = 0; y < width; y++) {
-    for (let x = 0; x < height; x++) {
-      if (board[y][x] === false) {
+  for (let y = 0; y < board.length; y++) {
+    for (let x = 0; x < board[0].length; x++) {
+      if (!board[y][x]) {
         falseCount++;
       }
     }
@@ -89,6 +99,7 @@ const falseBoard = (board: boolean[][]): number => {
   return falseCount;
 };
 
+//初期化用空盤面作成
 const resetBoard = (rows: number, cols: number): number[][] => {
   return Array.from({ length: rows }, () => Array<number>(cols).fill(0));
 };
@@ -106,36 +117,33 @@ const countFlags = (userInput: number[][]): number => {
   return count;
 };
 
-//サイズ変更
-const width = 9;
-const height = 9;
-
-const resizeBoard = (length: number, length2: number): number[][] => {
-  const twoDimensionalArray: number[][] = Array.from({ length: length2 }, () =>
-    Array.from({ length }, () => 0),
-  );
-  return twoDimensionalArray;
+//盤面サイズをリサイズ
+const resizeBoard = (width: number, height: number): number[][] => {
+  return Array.from({ length: height }, () => Array<number>(width).fill(0));
 };
 
 export default function Home() {
-  const [lengthCustom, setLengthCustom] = useState(9);
+  //状態管理により盤面サイズと爆弾数を保持
   const [widthCustom, setWidthCustom] = useState(9);
-  const [mineCount, setMineCount] = useState(9);
+  const [lengthCustom, setLengthCustom] = useState(9);
+  const [mineCount, setMineCount] = useState(10);
 
+  //ユーザーボード（旗・？マーク管理）
   const [userInput, setUserInput] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
+  //爆弾ボード
   const [minesBoard, setMinesBoard] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
+  //数字ボード
   const [board, setBoard] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
 
-  const [started, setStarted] = useState(false);
-  //開いているマスか開いていないマスかをuseStateで管理
+  //開いているかどうか
   const [opened, setOpened] = useState<boolean[][]>(
-    Array.from({ length: 9 }, (): boolean[] => {
-      return Array(9).fill(false) as boolean[];
-    }),
+    Array.from({ length: lengthCustom }, () => Array<boolean>(widthCustom).fill(false)),
   );
+
+  const [started, setStarted] = useState(false);
   const [time, setTime] = useState(0);
 
-  // ⏱ useEffectタイマー管理
+  //タイマー管理
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     if (started) {
@@ -146,68 +154,86 @@ export default function Home() {
     return () => clearInterval(intervalId);
   }, [started]);
 
+  //セルクリック処理
   const clickHandler = (x: number, y: number) => {
+    if (opened[y][x]) return; //すでに開いているなら何もしない
+
     const newOpened = opened.map((row) => [...row]);
     if (!started) {
-      const newMinesBoard = randomMinesBoard([...minesBoard.map((row) => [...row])], x, y);
+      //ゲーム開始時に爆弾設置
+      const newMinesBoard = randomMinesBoard(
+        minesBoard.map((row) => [...row]),
+        x,
+        y,
+        widthCustom,
+        lengthCustom,
+        mineCount,
+      );
       const allBoard = numberBoard(newMinesBoard);
       setMinesBoard(newMinesBoard);
       setBoard(allBoard);
       setStarted(true);
-      openCell(x, y, allBoard, newOpened);
+      openCell(x, y, allBoard, newOpened, widthCustom, lengthCustom);
     } else {
-      openCell(x, y, board, newOpened);
+      openCell(x, y, board, newOpened, widthCustom, lengthCustom);
     }
 
     if (board[y][x] === MINES) {
-      userInput[y][x] = 4;
-      setUserInput(userInput);
+      const newUserInput = userInput.map((row) => [...row]);
+      newUserInput[y][x] = 4; //爆弾クリックマーク
+      setUserInput(newUserInput);
       alert('ゲームオーバー');
-      for (let i = 0; i < 9; i++) {
-        for (let k = 0; k < 9; k++) {
+      for (let i = 0; i < lengthCustom; i++) {
+        for (let k = 0; k < widthCustom; k++) {
           if (minesBoard[i][k] === MINES) {
             newOpened[i][k] = true;
           }
         }
       }
       setOpened(newOpened);
+      setStarted(false);
       return;
     } else {
       const reman = falseBoard(newOpened);
-      if (reman === MINE_COUNT) {
+      if (reman === mineCount) {
         alert('勝利！！！');
+        setStarted(false);
       }
     }
 
     setOpened(newOpened);
   };
 
+  //右クリック処理（旗・？マーク）
   const rightClickHandler = (e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault();
+    if (opened[y][x]) return;
+
     const newUserInput = structuredClone(userInput);
     const current = newUserInput[y][x];
     const currentFlags = countFlags(userInput);
 
     if (current === 0) {
-      if (currentFlags >= MINE_COUNT) return;
-      newUserInput[y][x] = 1;
+      if (currentFlags >= mineCount) return;
+      newUserInput[y][x] = 1; //旗
     } else if (current === 1) {
-      newUserInput[y][x] = 2;
+      newUserInput[y][x] = 2; //？マーク
     } else if (current === 2) {
-      newUserInput[y][x] = 0;
+      newUserInput[y][x] = 0; //何もなし
     }
 
     setUserInput(newUserInput);
   };
 
   const flagCount = countFlags(userInput);
-  const remainingMines = MINE_COUNT - flagCount;
+  const remainingMines = mineCount - flagCount;
 
+  //ゲームリセット
   const resetGame = () => {
-    setMinesBoard(resetBoard(height, width));
-    setUserInput(resetBoard(height, width));
-    setBoard(resetBoard(height, width));
-    setOpened(Array.from({ length: height }, () => Array<boolean>(width).fill(false)));
+    setMinesBoard(resetBoard(lengthCustom, widthCustom));
+    setUserInput(resetBoard(lengthCustom, widthCustom));
+    setBoard(resetBoard(lengthCustom, widthCustom));
+    setOpened(Array.from({ length: lengthCustom }, () => Array<boolean>(widthCustom).fill(false)));
     setTime(0);
     setStarted(false);
   };
@@ -254,8 +280,14 @@ export default function Home() {
           </span>
         </form>
       </div>
-      <div className={styles.bigMamBoard}>
-        <div className={styles.bigBoard}>
+      <div
+        className={styles.bigMamBoard}
+        style={{ width: 40 + 30 * widthCustom, height: 130 + 30 * lengthCustom }}
+      >
+        <div
+          className={styles.bigBoard}
+          style={{ width: 10 + 30 * widthCustom, height: 90 + 30 * lengthCustom }}
+        >
           <div className={styles.states}>
             <div className={styles.mineCountBoard}>
               <div
@@ -267,13 +299,21 @@ export default function Home() {
               <div
                 className={styles.bombDigit}
                 style={{
-                  backgroundPosition: `${-20.7 * Math.floor((Number(remainingMines) - Math.floor(time / 100) * 100) / 10)}px`,
+                  backgroundPosition: `${
+                    -20.7 *
+                    Math.floor(
+                      (Number(remainingMines) - Math.floor(Number(remainingMines) / 100) * 100) /
+                        10,
+                    )
+                  }px`,
                 }}
               />
               <div
                 className={styles.bombDigit}
                 style={{
-                  backgroundPosition: `${-20.7 * (remainingMines - Math.floor(Number(remainingMines) / 10) * 10)}px`,
+                  backgroundPosition: `${
+                    -20.7 * (Number(remainingMines) - Math.floor(Number(remainingMines) / 10) * 10)
+                  }px`,
                 }}
               />
             </div>
@@ -314,7 +354,7 @@ export default function Home() {
             <div
               className={styles.board}
               style={{
-                gridTemplateColumns: `repeat(${width}, 30px)`,
+                gridTemplateColumns: `repeat(${widthCustom}, 30px)`,
                 width: `${30 * widthCustom}px`,
                 height: `${30 * lengthCustom}px`,
               }}
@@ -323,24 +363,25 @@ export default function Home() {
                 row.map((cell, x) => (
                   <div
                     key={`${x}-${y}`}
-                    className={`${styles.cell} ${cell === MINES ? styles.mine : ''}
-                ${opened[y][x] && userInput[y][x] === 4 ? styles.overCell : ''}`}
+                    className={`${styles.cell} ${cell === MINES ? styles.mine : ''} ${
+                      opened[y][x] && userInput[y][x] === 4 ? styles.overCell : ''
+                    }`}
                     onClick={() => clickHandler(x, y)}
+                    onContextMenu={(e) => rightClickHandler(e, x, y)}
                   >
-                    {cell !== MINES && opened[y][x] && (
+                    {cell !== MINES && opened[y][x] && cell > 0 && (
                       <div
                         className={styles.cellCount}
-                        style={{ backgroundPosition: `${-30 * (cell - 1)}px ` }}
+                        style={{ backgroundPosition: `${-30 * (cell - 1)}px` }}
                       />
                     )}
 
                     {!opened[y][x] && (
-                      <div
-                        className={styles.coverCell}
-                        onContextMenu={(e) => rightClickHandler(e, x, y)}
-                      >
+                      <div className={styles.coverCell}>
                         <div
-                          className={`${userInput[y][x] === 1 ? styles.flag : ''} ${userInput[y][x] === 2 ? styles.questionmark : ''}`}
+                          className={`${userInput[y][x] === 1 ? styles.flag : ''} ${
+                            userInput[y][x] === 2 ? styles.questionmark : ''
+                          }`}
                         />
                       </div>
                     )}

@@ -195,8 +195,6 @@
   background-image: url('~/src/assets/images/image.png');
 }
 
-.costomBoard {
-  width: 600px;
-  height: 600px;
+.customBoard {
   background-color: black;
 }
