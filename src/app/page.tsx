@@ -128,6 +128,30 @@ export default function Home() {
   const [lengthCustom, setLengthCustom] = useState(9);
   const [mineCount, setMineCount] = useState(10);
 
+  const setLevel = (level: 'easy' | 'medium' | 'hard') => {
+    let w = 9,
+      l = 9,
+      b = 10;
+    if (level === 'medium') {
+      w = 16;
+      l = 16;
+      b = 40;
+    } else if (level === 'hard') {
+      w = 30;
+      l = 16;
+      b = 99;
+    }
+
+    setWidthCustom(w);
+    setLengthCustom(l);
+    setMineCount(b);
+    resetGame();
+    setUserInput(resizeBoard(w, l));
+    setMinesBoard(resizeBoard(w, l));
+    setBoard(resizeBoard(w, l));
+    setOpened(Array.from({ length: l }, () => Array<boolean>(w).fill(false)));
+  };
+
   //ユーザーボード（旗・？マーク管理）
   const [userInput, setUserInput] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
   //爆弾ボード
@@ -263,6 +287,17 @@ export default function Home() {
             }
           }}
         >
+          <div style={{ marginBottom: '10px' }}>
+            <button type="button" onClick={() => setLevel('easy')}>
+              初級
+            </button>
+            <button type="button" onClick={() => setLevel('medium')}>
+              中級
+            </button>
+            <button type="button" onClick={() => setLevel('hard')}>
+              上級
+            </button>
+          </div>
           <span>
             <label>
               幅
@@ -282,13 +317,19 @@ export default function Home() {
       </div>
       <div
         className={styles.bigMamBoard}
-        style={{ width: 40 + 30 * widthCustom, height: 130 + 30 * lengthCustom }}
+        style={{ width: `${40 + 30 * widthCustom}px`, height: `${130 + 30 * lengthCustom}px` }}
       >
         <div
           className={styles.bigBoard}
-          style={{ width: 10 + 30 * widthCustom, height: 90 + 30 * lengthCustom }}
+          style={{ width: `${10 + 30 * widthCustom}px`, height: `${90 + 30 * lengthCustom}px` }}
         >
-          <div className={styles.states}>
+          <div
+            className={styles.states}
+            style={{
+              width: `${10 + 30 * widthCustom}px`,
+              height: `70px`,
+            }}
+          >
             <div className={styles.mineCountBoard}>
               <div
                 className={styles.bombDigit}
