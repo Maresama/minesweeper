@@ -33,15 +33,6 @@
   background-color: rgb(255 39 39);
 }
 
-.mineBoard {
-  display: grid;
-  grid-template-columns: repeat(9, 30px);
-  width: 270px;
-  height: 270px;
-  background: url('~/src/assets/images/image.png') no-repeat;
-  border: 1px solid black;
-}
-
 .coverCell {
   position: absolute;
   width: 30px;
@@ -202,4 +193,10 @@
   height: 30px;
   cursor: pointer;
   background-image: url('~/src/assets/images/image.png');
+}
+
+.costomBoard {
+  width: 600px;
+  height: 600px;
+  background-color: black;
 }

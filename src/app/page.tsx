@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
 //爆弾の設定
@@ -22,8 +22,8 @@ const directions = [
 const randomMinesBoard = (minesBoard: number[][], safeX: number, safeY: number) => {
   let placed = 0;
   while (placed < MINE_COUNT) {
-    const x = Math.floor(Math.random() * 9);
-    const y = Math.floor(Math.random() * 9);
+    const x = Math.floor(Math.random() * width);
+    const y = Math.floor(Math.random() * height);
     if ((x === safeX && y === safeY) || minesBoard[y][x] === MINES) {
       continue;
     }
@@ -63,7 +63,7 @@ const numberBoard = (minesBoard: number[][]): number[][] => {
 
 //再帰関数 空白を連続で開ける
 const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][]) => {
-  if (x < 0 || x >= 9 || y < 0 || y >= 9) return;
+  if (x < 0 || x >= width || y < 0 || y >= height) return;
   if (newOpened[y][x]) return;
   newOpened[y][x] = true;
   if (board[y][x] !== 0) {
@@ -79,8 +79,8 @@ const openCell = (x: number, y: number, board: number[][], newOpened: boolean[][
 const falseBoard = (board: boolean[][]): number => {
   let falseCount = 0;
 
-  for (let y = 0; y < 9; y++) {
-    for (let x = 0; x < 9; x++) {
+  for (let y = 0; y < width; y++) {
+    for (let x = 0; x < height; x++) {
       if (board[y][x] === false) {
         falseCount++;
       }
@@ -106,84 +106,63 @@ const countFlags = (userInput: number[][]): number => {
   return count;
 };
 
+//サイズ変更
+const width = 9;
+const height = 9;
+
+const resizeBoard = (length: number, length2: number): number[][] => {
+  const twoDimensionalArray: number[][] = Array.from({ length: length2 }, () =>
+    Array.from({ length }, () => 0),
+  );
+  return twoDimensionalArray;
+};
+
 export default function Home() {
-  //爆弾を設置するボード
-  const [minesBoard, setMinesBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ]);
-  //ユーザーが入力するボード
-  const [userInput, setUserInput] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ]);
-  //視覚可能ボード
-  const [board, setBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ]);
+  const [lengthCustom, setLengthCustom] = useState(9);
+  const [widthCustom, setWidthCustom] = useState(9);
+  const [mineCount, setMineCount] = useState(9);
 
-  //ゲーム開始判定
+  const [userInput, setUserInput] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
+  const [minesBoard, setMinesBoard] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
+  const [board, setBoard] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
+
   const [started, setStarted] = useState(false);
-
   //開いているマスか開いていないマスかをuseStateで管理
   const [opened, setOpened] = useState<boolean[][]>(
     Array.from({ length: 9 }, (): boolean[] => {
       return Array(9).fill(false) as boolean[];
     }),
   );
-  //タイマー
-  const [time, setTime] = useState(0); // 経過時間（秒）
-  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
+  const [time, setTime] = useState(0);
 
-  //ユーザーがクリックしたとき
+  // ⏱ useEffectタイマー管理
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (started) {
+      intervalId = setInterval(() => {
+        setTime((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(intervalId);
+  }, [started]);
+
   const clickHandler = (x: number, y: number) => {
     const newOpened = opened.map((row) => [...row]);
     if (!started) {
-      // 最初のクリック時にランダムに爆弾設置を表示
       const newMinesBoard = randomMinesBoard([...minesBoard.map((row) => [...row])], x, y);
       const allBoard = numberBoard(newMinesBoard);
       setMinesBoard(newMinesBoard);
       setBoard(allBoard);
       setStarted(true);
-
-      console.log(board);
-      //タイム1000秒まで
-      const id = setInterval(() => {
-        setTime((prev) => prev + 1);
-      }, 1000);
-      setTimerId(id);
       openCell(x, y, allBoard, newOpened);
     } else {
-      openCell(x, y, board, newOpened); // 2回目以降は `board` を使う
+      openCell(x, y, board, newOpened);
     }
-    console.log(board);
+
     if (board[y][x] === MINES) {
       userInput[y][x] = 4;
       setUserInput(userInput);
       alert('ゲームオーバー');
-      if (timerId) clearInterval(timerId); // タイマー停止
       for (let i = 0; i < 9; i++) {
         for (let k = 0; k < 9; k++) {
           if (minesBoard[i][k] === MINES) {
@@ -191,38 +170,29 @@ export default function Home() {
           }
         }
       }
-      console.log(newOpened);
-      setOpened(newOpened); // 全爆弾を開く
-      return; // 処理終了
+      setOpened(newOpened);
+      return;
     } else {
-      const reman = falseBoard(newOpened); //開いてないところをカウント
+      const reman = falseBoard(newOpened);
       if (reman === MINE_COUNT) {
-        //numberにして比較
         alert('勝利！！！');
-        if (timerId) clearInterval(timerId); // タイマー停止
       }
     }
 
     setOpened(newOpened);
   };
 
-  //右クリック操作（旗、はてな、空白）
   const rightClickHandler = (e: React.MouseEvent, x: number, y: number) => {
-    e.preventDefault(); // ブラウザのデフォルトの右クリックメニューを無効化
+    e.preventDefault();
     const newUserInput = structuredClone(userInput);
     const current = newUserInput[y][x];
-
-    // 旗の本数を事前に計算
     const currentFlags = countFlags(userInput);
 
     if (current === 0) {
-      if (currentFlags >= MINE_COUNT) {
-        // 旗の上限に達しているので何もしない
-        return;
-      }
-      newUserInput[y][x] = 1; // 旗を立てる
+      if (currentFlags >= MINE_COUNT) return;
+      newUserInput[y][x] = 1;
     } else if (current === 1) {
-      newUserInput[y][x] = 2; // はてなマーク
+      newUserInput[y][x] = 2;
     } else if (current === 2) {
       newUserInput[y][x] = 0;
     }
@@ -230,29 +200,60 @@ export default function Home() {
     setUserInput(newUserInput);
   };
 
-  //爆弾の数（旗の数）
   const flagCount = countFlags(userInput);
   const remainingMines = MINE_COUNT - flagCount;
 
   const resetGame = () => {
-    // タイマーを止める
-    if (timerId) {
-      clearInterval(timerId);
-      setTimerId(null);
-    }
-
-    // 初期状態に戻す
-
-    setMinesBoard(resetBoard(9, 9));
-    setUserInput(resetBoard(9, 9));
-    setBoard(resetBoard(9, 9));
-    setOpened(Array.from({ length: 9 }, () => Array<boolean>(9).fill(false)));
+    setMinesBoard(resetBoard(height, width));
+    setUserInput(resetBoard(height, width));
+    setBoard(resetBoard(height, width));
+    setOpened(Array.from({ length: height }, () => Array<boolean>(width).fill(false)));
     setTime(0);
     setStarted(false);
   };
 
   return (
     <div className={styles.container}>
+      <div className={styles.customBoard}>
+        <form
+          style={{ marginBottom: `20px` }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const from = e.target as HTMLFormElement;
+            const w = Number((from.elements.namedItem('width') as HTMLInputElement).value);
+            const l = Number((from.elements.namedItem('length') as HTMLInputElement).value);
+            const b = Number((from.elements.namedItem('bomb') as HTMLInputElement).value);
+            if (w > 0 && l > 0 && b > 0 && b < w * l) {
+              setWidthCustom(w);
+              setLengthCustom(l);
+              setMineCount(b);
+              resetGame();
+              setUserInput(resizeBoard(w, l));
+              setMinesBoard(resizeBoard(w, l));
+              setBoard(resizeBoard(w, l));
+              setOpened(Array.from({ length: l }, () => Array<boolean>(w).fill(false)));
+            } else {
+              alert('正しい値を入力してください');
+            }
+          }}
+        >
+          <span>
+            <label>
+              幅
+              <input type="number" name="width" defaultValue={widthCustom} min={1} max={100} />
+            </label>
+            <label>
+              高さ
+              <input type="number" name="length" defaultValue={lengthCustom} min={1} max={100} />
+            </label>
+            <label>
+              爆弾数
+              <input type="number" name="bomb" defaultValue={mineCount} min={1} max={10000} />
+            </label>
+            <button type="submit">更新</button>
+          </span>
+        </form>
+      </div>
       <div className={styles.bigMamBoard}>
         <div className={styles.bigBoard}>
           <div className={styles.states}>
@@ -306,8 +307,18 @@ export default function Home() {
               />
             </div>
           </div>
-          <div className={styles.gameBoard}>
-            <div className={styles.board}>
+          <div
+            className={styles.gameBoard}
+            style={{ width: `${10 + 30 * widthCustom}px`, height: `${10 + 30 * lengthCustom}px` }}
+          >
+            <div
+              className={styles.board}
+              style={{
+                gridTemplateColumns: `repeat(${width}, 30px)`,
+                width: `${30 * widthCustom}px`,
+                height: `${30 * lengthCustom}px`,
+              }}
+            >
               {board.map((row, y) =>
                 row.map((cell, x) => (
                   <div
