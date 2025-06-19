@@ -152,6 +152,8 @@ export default function Home() {
     setOpened(Array.from({ length: l }, () => Array<boolean>(w).fill(false)));
   };
 
+  const [gameStatus, setGameStatus] = useState<'normal' | 'win' | 'lose'>('normal');
+
   //ユーザーボード（旗・？マーク管理）
   const [userInput, setUserInput] = useState<number[][]>(resizeBoard(widthCustom, lengthCustom));
   //爆弾ボード
@@ -207,6 +209,7 @@ export default function Home() {
       newUserInput[y][x] = 4; //爆弾クリックマーク
       setUserInput(newUserInput);
       alert('ゲームオーバー');
+      setGameStatus('lose');
       for (let i = 0; i < lengthCustom; i++) {
         for (let k = 0; k < widthCustom; k++) {
           if (minesBoard[i][k] === MINES) {
@@ -221,6 +224,7 @@ export default function Home() {
       const reman = falseBoard(newOpened);
       if (reman === mineCount) {
         alert('勝利！！！');
+        setGameStatus('win');
         setStarted(false);
       }
     }
@@ -260,6 +264,7 @@ export default function Home() {
     setOpened(Array.from({ length: lengthCustom }, () => Array<boolean>(widthCustom).fill(false)));
     setTime(0);
     setStarted(false);
+    setGameStatus('normal');
   };
 
   return (
@@ -362,7 +367,8 @@ export default function Home() {
               <div
                 className={styles.button}
                 style={{
-                  backgroundPosition: `-330px`,
+                  backgroundPosition:
+                    gameStatus === 'win' ? '-360px' : gameStatus === 'lose' ? '-390px' : '-330px',
                 }}
                 onClick={resetGame}
               />
